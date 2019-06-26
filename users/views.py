@@ -83,4 +83,20 @@ class Login(APIView):
 		except Audience.DoesNotExist:
 			return HttpResponse("Username and password not matched!")
 			# return Response({'received data': request.data})
+class Logout(APIView):
 
+	def get(self,request):
+		try:
+			del request.session['user_id']
+		except KeyError:
+			pass #return #HttpResponse('already logged out . log in and try again ')
+		return HttpResponse("You're logged out.")
+
+class CheckLogin(APIView):
+	def get(self, request):
+		try:
+			id_in_session = request.session['user_id']
+			usersData = Audience.objects.get(user_id = id_in_session)
+			return HttpResponse(' uset {0} logged in already'.format(usersData.username))
+		except KeyError:
+			return HttpResponse('already logged out . log in and try again ')
