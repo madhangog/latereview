@@ -6,3 +6,5 @@ class AudienceSerializer(serializers.ModelSerializer):
 		model = Audience
 		# fields = ('user_id' , 'username', 'password', 'mobile')
 		fields = '__all__'
+
+ 
