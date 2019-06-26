@@ -13,7 +13,7 @@ from . models import Audience
 from django.core.signing import Signer
 from rest_framework.parsers import JSONParser
 
-
+#signer is used to hash the password
 signer = Signer()
 
 
@@ -36,11 +36,13 @@ signer = Signer()
 	# return HttpResponse("hello")
 
 class UserList(APIView):
+
+	#method to hass the password
 	@classmethod
 	def hash_password(cls,password):
 		signer = Signer()
 		value = signer.sign(password)
-		print value
+		# print value
 		return value
 
 	def get(self, request ,format=None):
@@ -52,29 +54,34 @@ class UserList(APIView):
 		serializer = AudienceSerializer(data=request.data)
 		if serializer.is_valid():
 			data = serializer.validated_data
-			print(data)
+			# print(data)
 			password = data['password']
-			print(password)
+			# print(password)
+			#dbpass == hashed password
 			dbpass = self.hash_password(password)
-			print(dbpass)
+			# print(dbpass)
 			serializer.validated_data['password'] = dbpass
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class Login(APIView):
 
+#login class
+class Login(APIView):
+	#parser is to parse json format, it  returns JSON
 	parser_classes = (JSONParser,)
 
 	def post(self, request, format=None):
 		username = request.data["username"]
 		password = request.data["password"]
-		print username
-		print password
+		# print username
+		# print password
 		try:
 			usersData = Audience.objects.get(username = username)
 			original_password = signer.unsign(usersData.password)
 			if password == original_password:
+
+				#setting up sessions using user_id
 				request.session['user_id'] = usersData.user_id
 
 				return HttpResponse("Logged in successfully")
@@ -83,15 +90,19 @@ class Login(APIView):
 		except Audience.DoesNotExist:
 			return HttpResponse("Username and password not matched!")
 			# return Response({'received data': request.data})
+
+#logout class
 class Logout(APIView):
 
 	def get(self,request):
 		try:
+			#deleting sessions
 			del request.session['user_id']
 		except KeyError:
 			pass #return #HttpResponse('already logged out . log in and try again ')
 		return HttpResponse("You're logged out.")
 
+#to check loging logout working status
 class CheckLogin(APIView):
 	def get(self, request):
 		try:
