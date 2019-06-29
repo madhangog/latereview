@@ -8,14 +8,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from . serializer import AudienceSerializer
-from . models import Audience
+from . serializer import CriticsSerializer
+
+from . models import Audience, Critics
 
 from django.core.signing import Signer
 from rest_framework.parsers import JSONParser
 
 #signer is used to hash the password
 signer = Signer()
-
 
 
 # from .forms import RegisterFrom
@@ -51,7 +52,7 @@ class UserList(APIView):
 		return Response(serializer.data)
 
 	def post(self, request, format=None):
-		serializer = AudienceSerializer(data=request.data)
+		serializer = CriticsSerializer(data=request.data)
 		if serializer.is_valid():
 			data = serializer.validated_data
 			# print(data)
@@ -76,20 +77,55 @@ class Login(APIView):
 		password = request.data["password"]
 		# print username
 		# print password
+		
 		try:
-			usersData = Audience.objects.get(username = username)
-			original_password = signer.unsign(usersData.password)
+			admin = Critics.objects.get(name = username)
+			original_password = signer.unsign(admin.password)
 			if password == original_password:
 
 				#setting up sessions using user_id
-				request.session['user_id'] = usersData.user_id
+				request.session['critic_id']= admin.critic_id
 
-				return HttpResponse("Logged in successfully")
+				return HttpResponse("Admin logged in and the posts are......")
 			else:
 				return HttpResponse("incorrect password ")
-		except Audience.DoesNotExist:
-			return HttpResponse("Username and password not matched!")
-			# return Response({'received data': request.data})
+			
+			
+
+		except Critics.DoesNotExist:
+				
+			try:
+				usersData = Audience.objects.get(username = username)
+				original_password = signer.unsign(usersData.password)
+				if password == original_password:
+
+					#setting up sessions using user_id
+					request.session['user_id'] = usersData.user_id
+
+					return HttpResponse("Logged in successfully")
+				else:
+					return HttpResponse("incorrect password ")
+			except Audience.DoesNotExist:
+				return HttpResponse("Username and password not matched!")
+				# return Response({'received data': request.data})
+
+
+
+
+		# try:
+		# 	usersData = Audience.objects.get(username = username)
+		# 	original_password = signer.unsign(usersData.password)
+		# 	if password == original_password:
+
+		# 		#setting up sessions using user_id
+		# 		request.session['user_id'] = usersData.user_id
+
+		# 		return HttpResponse("Logged in successfully")
+		# 	else:
+		# 		return HttpResponse("incorrect password ")
+		# except Audience.DoesNotExist:
+		# 	return HttpResponse("Username and password not matched!")
+		# 	# return Response({'received data': request.data})
 
 #logout class
 class Logout(APIView):
@@ -98,9 +134,15 @@ class Logout(APIView):
 		try:
 			#deleting sessions
 			del request.session['user_id']
+			return HttpResponse("user logged out.")
+
 		except KeyError:
-			pass #return #HttpResponse('already logged out . log in and try again ')
-		return HttpResponse("You're logged out.")
+			try:
+				del request.session['critic_id']
+				return 	HttpResponse("admin  logged out.")
+			except: 
+				return HttpResponse("not logged in to any account")
+				#return #HttpResponse('already logged out . log in and try again ')\
 
 #to check loging logout working status
 class CheckLogin(APIView):
@@ -110,4 +152,9 @@ class CheckLogin(APIView):
 			usersData = Audience.objects.get(user_id = id_in_session)
 			return HttpResponse(' uset {0} logged in already'.format(usersData.username))
 		except KeyError:
-			return HttpResponse('already logged out . log in and try again ')
+			try:
+				admin_data = Critics.objects.get(critic_id= request.session['critic_id'])
+				return HttpResponse(' admin {0} logged in already'.format(admin_data.name))
+
+			except KeyError:
+				return HttpResponse('already logged out . log in and try again ')
