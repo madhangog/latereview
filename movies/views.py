@@ -7,8 +7,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from . models import  Movies
-from . serializer import MoviesSerializer
+from . models import  Movies,Reviews
+from . serializer import MoviesSerializer,ReviewsSerializer
 from rest_framework.parsers import JSONParser
 
 # Create your views here.
@@ -40,7 +40,13 @@ class MovieList(APIView):
 class Reviews(APIView):
 
 	def get(self, request, format=True):
-		pass
+		try:
+			ReviewData = Reviews.objects.all()
+			print MovieData
+			serializer = ReviewsSerializer(ReviewData, many=True)
+			return Response(serializer.data)
+		except: 
+			return HttpResponse("error in getting objects")
 
 
 	def post(self, request, format=True):
