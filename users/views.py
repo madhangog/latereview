@@ -9,9 +9,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from . serializer import AudienceSerializer
 from . serializer import CriticsSerializer
+# from .serializer import reviewerPolymorphicSerializer
 
-from . models import Audience, Critics
 
+from . models import Audience, Critics#, reviewer
+
+#
 from django.core.signing import Signer
 from rest_framework.parsers import JSONParser
 
@@ -35,6 +38,12 @@ signer = Signer()
 	#     form = RegisterFrom()
 	# return render( request ,"users/register.html", {'form': form})
 	# return HttpResponse("hello")
+# class reviewerViewSet(viewsets.ModelViewSet):
+#       queryset = reviewer.objects.all()
+#       serializer_class = reviewerPolymorphicSerializer
+#       print queryset, serializer_class
+
+
 
 class UserList(APIView):
 
@@ -84,7 +93,7 @@ class Login(APIView):
 			if password == original_password:
 
 				#setting up sessions using user_id
-				request.session['critic_id']= admin.critic_id
+				request.session['critic_id']= admin.reviewer_id
 
 				return HttpResponse("Admin logged in and the posts are......")
 			else:
@@ -100,7 +109,7 @@ class Login(APIView):
 				if password == original_password:
 
 					#setting up sessions using user_id
-					request.session['user_id'] = usersData.user_id
+					request.session['user_id'] = usersData.reviewer_id
 
 					return HttpResponse("Logged in successfully")
 				else:
@@ -149,11 +158,11 @@ class CheckLogin(APIView):
 	def get(self, request):
 		try:
 			id_in_session = request.session['user_id']
-			usersData = Audience.objects.get(user_id = id_in_session)
+			usersData = Audience.objects.get(reviewer_id = id_in_session)
 			return HttpResponse(' uset {0} logged in already'.format(usersData.username))
 		except KeyError:
 			try:
-				admin_data = Critics.objects.get(critic_id= request.session['critic_id'])
+				admin_data = Critics.objects.get(reviewer_id= request.session['critic_id'])
 				return HttpResponse(' admin {0} logged in already'.format(admin_data.name))
 
 			except KeyError:

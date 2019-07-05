@@ -37,4 +37,17 @@ class MovieList(APIView):
 			return HttpResponse("not logged into admin account")
 
 
+class Reviews(APIView):
+
+	def get(self, request, format=True):
+		pass
+
+
+	def post(self, request, format=True):
+		serializer = ReviewsSerializer(data=request.data)
+		if serializer.is_valid():
+			data = serializer.validated_data
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

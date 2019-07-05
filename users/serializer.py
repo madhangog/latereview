@@ -1,7 +1,16 @@
 from rest_framework import serializers
-from . models import Audience
-from . models import Critics
+from . models import Audience, Critics#, reviewer
+# from rest_polymorphic.serializers import PolymorphicSerializer
 
+
+
+# class reviewerSerializer(serializers.ModelSerializer):
+# 	class Meta:
+# 		model = reviewer
+# 		# fields = ('user_id' , 'username', 'password', 'mobile')
+# 		fields = '__all__'
+
+ 
 
 class AudienceSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -16,4 +25,14 @@ class CriticsSerializer(serializers.ModelSerializer):
 		# fields = ('user_id' , 'username', 'password', 'mobile')
 		fields = '__all__'
 
- 
+
+# class reviewerPolymorphicSerializer(PolymorphicSerializer):
+
+# 		model_serializer_mapping = {
+# 			reviewer: reviewerSerializer,
+# 			Audience: AudienceSerializer,
+# 			Critics: CriticsSerializer
+# 		}
+
+
+#  
