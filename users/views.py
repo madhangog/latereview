@@ -26,8 +26,9 @@ signer = Signer()
 
 # Create your views here.
 
-# def index(request):
-# 	return HttpResponse("<h1> Heloio </h1>")
+def index(request):
+	title ="welcome to LATE_REVIEW"
+	return render(request, 'index.html')
 
 # def register(request):
 	# if request.method == 'POST':
@@ -59,6 +60,8 @@ class UserList(APIView):
 		usersData = Audience.objects.all()
 		serializer = AudienceSerializer(usersData, many=True)
 		return Response(serializer.data)
+		# return render(request, 'users.html', {'data': serializer.data})
+
 
 	def post(self, request, format=None):
 		serializer = CriticsSerializer(data=request.data)

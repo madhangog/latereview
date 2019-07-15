@@ -37,12 +37,12 @@ class MovieList(APIView):
 			return HttpResponse("not logged into admin account")
 
 
-class Reviews(APIView):
+class ReviewList(APIView):
 
 	def get(self, request, format=True):
 		try:
 			ReviewData = Reviews.objects.all()
-			print MovieData
+			# print ReviewData
 			serializer = ReviewsSerializer(ReviewData, many=True)
 			return Response(serializer.data)
 		except: 

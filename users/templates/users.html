@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Basic Site Template</title>
+	</head>
+	<body>
+		{% for a in data %}
+			<p></p>
+			{%for key, value in a.items %}
+				<li>{{key}}==={{value}}</li>
+			{%endfor%}
+		{%endfor%}
+	</body>
+</html>
