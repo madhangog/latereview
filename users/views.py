@@ -64,7 +64,8 @@ class UserList(APIView):
 
 
 	def post(self, request, format=None):
-		serializer = CriticsSerializer(data=request.data)
+		
+		serializer = AudienceSerializer(data=request.data)
 		if serializer.is_valid():
 			data = serializer.validated_data
 			# print(data)
@@ -78,6 +79,41 @@ class UserList(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+
+class CriticList(APIView):
+
+	#method to hass the password
+	@classmethod
+	def hash_password(cls,password):
+		signer = Signer()
+		value = signer.sign(password)
+		# print value
+		return value
+
+	def get(self, request ,format=None):
+		usersData = Critics.objects.all()
+		serializer = CriticsSerializer(usersData, many=True)
+		return Response(serializer.data)
+		# return render(request, 'users.html', {'data': serializer.data})
+
+
+	def post(self, request, format=None):
+		
+		serializer = CriticsSerializer(data=request.data)
+		if serializer.is_valid():
+			data = serializer.validated_data
+			# print(data)
+			password = data['password']
+			# print(password)
+			#dbpass == hashed password
+			dbpass = self.hash_password(password)
+			# print(dbpass)
+			serializer.validated_data['password'] = dbpass
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #login class
 class Login(APIView):
