@@ -30,7 +30,10 @@ class MovieList(APIView):
 				MovieData = Movies.objects.all()
 				print MovieData
 				serializer = MoviesSerializer(MovieData, many=True)
+				movie_data = serializer.data
+				print movie_data
 				return Response(serializer.data)
+				# return render(request, 'movies.html', { 'name': movie_data.name, 'director': movie_data.director,'writer': movie_data.writer, 'poster' : movie_data.movie_poster })
 			except: 
 				return HttpResponse("error in getting objects")
 		except KeyError: 

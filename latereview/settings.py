@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'movies',
-    'polymorphic'
+    'polymorphic',
+    'django_seed'
 
 ]
 

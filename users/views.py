@@ -26,9 +26,9 @@ signer = Signer()
 
 # Create your views here.
 
-def index(request):
-	title ="welcome to LATE_REVIEW"
-	return render(request, 'index.html')
+# def index(request):
+# 	title ="welcome to LATE_REVIEW"
+# 	return render(request, 'index.html')
 
 # def register(request):
 	# if request.method == 'POST':

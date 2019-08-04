@@ -14,6 +14,7 @@ class Movies(models.Model):
 	music = models.CharField(max_length=30)
 	cast = models.CharField(max_length=50 )
 	genre = models.CharField(max_length=15)
+	movie_poster=models.ImageField(upload_to='movie_poster/', blank=True, null=True)
 
 	def __str__(self):
 		return self.name
